@@ -63,7 +63,7 @@ if [[ "$HTTP_CODE" != "200" ]]; then
 fi
 
 # --- Format output ---
-echo "$BODY" | jq -r '
+echo "$BODY" | jq -r --arg query "$QUERY" '
 if .success then
     if (.data.count // 0) > 0 then
         "Found \(.data.count) result(s):\n" +
@@ -72,11 +72,11 @@ if .success then
            "---\nID: \(.id)\nTimestamp: \(.timestamp)\nImportance: \(.importance)\nTags: \(.tags | join(", "))\n\n\(.content)\n"
          ) | join("\n"))
     else
-        "No results found for query: \"\(input)\""
+        "No results found for query: \"\($query)\""
     end
 else
     "Error: \(.error // "Unknown error")"
 end
-' --arg input "$QUERY"
+'
 
 exit 0
